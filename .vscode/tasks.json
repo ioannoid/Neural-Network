@@ -1,0 +1,69 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "shell",
+            "label": "build",
+            "command": "/usr/bin/g++",
+            "args": [
+                "-Wall",
+                "-g",
+                "-std=c++17",
+                "${workspaceFolder}/src/*.cpp",
+                "-o",
+                "${workspaceFolder}/build/program.out",
+                "-lstdc++"
+            ],
+            "options": {
+                "cwd": "/usr/bin"
+            },
+            "problemMatcher": [
+				{
+					"base": "$gcc",
+					"fileLocation": ["relative", "\\"]
+				}
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "dependsOn": [
+                "clean"
+            ]
+        },
+        {
+            "type": "shell",
+            "label": "build (release)",
+            "command": "/usr/bin/g++",
+            "args": [
+                "-Wall",
+                "-std=c++17",
+                "${workspaceFolder}/src/*.cpp",
+                "-o",
+                "${workspaceFolder}/build/program.out",
+                "-lstdc++"
+            ],
+            "options": {
+                "cwd": "/usr/bin"
+            },
+            "problemMatcher": [
+				{
+					"base": "$gcc",
+					"fileLocation": ["relative", "\\"]
+				}
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "dependsOn": [
+                "clean"
+            ]
+        },
+        {
+            "type": "shell",
+            "label": "clean",
+            "command": "rm -rf ${workspaceFolder}/build/*.out || true"
+        }
+    ]
+}
