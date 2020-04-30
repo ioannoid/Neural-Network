@@ -7,6 +7,10 @@
 #include <utility>
 #include <fstream>
 #include <time.h>
+#include <thread>
+#include <functional>
+#include <future>
+#include <mutex>
 
 #include "matrix.h"
 
@@ -31,7 +35,10 @@ private:
     std::vector<matrix> delta_weights;
     std::vector<matrix> delta_biases;
 
+    std::mutex mutex;
+
     void propagate(const matrix& in, const matrix& actual);
+    void threadProp(const matrix& in, const matrix& actual);
 
     double cost(const matrix& out, const matrix& actual) const;
     matrix dcost(const matrix& out, const matrix& actual) const;
@@ -124,6 +131,8 @@ std::pair<double, matrix> network::predict(const matrix& in, const matrix& actua
 
 void network::propagate(const matrix& in, const matrix& actual)
 {
+    actual.print();
+    printf("\n");
     std::vector<matrix> z(weights.size());
     std::vector<matrix> a(weights.size()+1);
 
@@ -151,20 +160,87 @@ void network::propagate(const matrix& in, const matrix& actual)
         dz_da = weights.at(i);
         dc_daMat = (dz_da.T()*(da_dz.hproduct(dc_da)));
     }
+
+    std::cout << "Lol what\n";
+}
+
+void network::threadProp(const matrix& in, const matrix& actual)
+{
+    std::vector<matrix> z(weights.size());
+    std::vector<matrix> a(weights.size()+1);
+
+    a.at(0) = in;
+    for(size_t i = 0; i < z.size(); i++)
+    {
+        z.at(i) = (weights.at(i)*a.at(i)) + biases.at(i);
+        a.at(i+1) = sigmoid(z.at(i));
+    }
+
+    matrix dc_daMat = actual, dz_dw, da_dz, dc_da, dc_dw, dc_db, dz_da;
+
+    for(int i = z.size()-1; i >= 0; i--)
+    {
+        dz_dw = a.at(i);
+        da_dz = dsigmoid(z.at(i));
+        dc_da = dcost(a.at(i+1), dc_daMat);
+
+        dc_dw = ((da_dz.hproduct(dc_da))*dz_dw.T());
+        mutex.lock();
+        delta_weights.at(i) = delta_weights.at(i) + dc_dw;
+        mutex.unlock();
+
+        dc_db = da_dz.hproduct(dc_da);
+        mutex.lock();
+        delta_biases.at(i) = delta_biases.at(i) + dc_db;
+        mutex.unlock();
+
+        dz_da = weights.at(i);
+        dc_daMat = (dz_da.T()*(da_dz.hproduct(dc_da)));
+    }
 }
 
 double network::train(int iterations, int batch_size, double training_rate, const std::vector<std::pair<matrix,matrix>>& training_data)
 {
+    if(batch_size < 1) exit(0);
+
     for(int i = 0; i < iterations; i++)
     {
-        for(int b = 0; b < batch_size; b++) 
+        int backPropsLeft = batch_size;
+        std::vector<std::thread> threads;
+
+        while(backPropsLeft != 0)
         {
-            srand (time(NULL));
-            int ri = std::rand() % training_data.size();
-            propagate(training_data.at(ri).first, training_data.at(ri).second);
+            if(backPropsLeft>=10)
+            {
+                backPropsLeft-=10;
+                for(int j = 0; j < 10; j++) 
+                {
+                    threads.push_back(std::thread([&training_data, this]{
+                            srand (time(NULL));
+                            int ri = std::rand() % training_data.size();
+                            threadProp(training_data.at(ri).first, training_data.at(ri).second);
+                        }));
+                }
+                for(std::thread& t : threads) t.join();
+            }
+            else
+            {
+                for(int j = 0; j < backPropsLeft; j++) 
+                {
+                    threads.push_back(std::thread([&training_data, this]{
+                            srand (time(NULL));
+                            int ri = std::rand() % training_data.size();
+                            threadProp(training_data.at(ri).first, training_data.at(ri).second);
+                        }));
+                }
+                for(std::thread& t : threads) t.join();
+
+                backPropsLeft = 0;
+            }
+            threads.clear();
         }
 
-        if(iterations%10 == 0)
+        if(i%10 == 0)
         {
             int ri = std::rand() % training_data.size();
             double cost = predict(training_data.at(ri).first, training_data.at(ri).second).first;

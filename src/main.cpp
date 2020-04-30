@@ -16,32 +16,20 @@ int filesize(const char* filename);
 
 int main() 
 {
-	// network nn = network({784, 20, 15, 10});
-	
-	// // for(int i = 0; i < 100; i++)
-	// // {
-	// // 	auto data = nn.predict();
-	// // 	printf("%.5f\n\n",data.first);
-	// // 	data.second.print();
-	// // 	printf("\n");
-	// // 	nn.train(100, 10, 1, vector<pair<matrix, matrix>>());
-	// // }
-
-	// nn.save("imap.nn");
 	auto data = network::spiltData(processImages("train-images"), processLabels("train-labels"), 5.0/6.0);
 
 	printf("Data Loaded\n\n");
 	//{784, 20, 15, 10}
 
-	network nn = network({784,500,150,10});
-	nn.train(1000, 100, 0.5, data.first);
+	network nn = network("secondnnmap.nn");//
+	nn.train(10000, 1000, 2.5, data.first);
 	// auto output = nn.predict(data.second.at(0).first, data.second.at(0).second);
 	// printf("Cost: %.5f\n", output.first);
 	// printf("\nPredicted:\n");
 	// output.second.print();
 	// printf("\nActual:\n");
-	// data.second.at(0).second.sprint();
-	nn.save("actualnnmap.nn");
+	// data.second.at(0).second.print();
+	nn.save("secondnnmap.nn");
 
 	cout << "Press enter to close...";
 	getchar(); 
