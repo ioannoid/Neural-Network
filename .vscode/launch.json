@@ -25,7 +25,7 @@
             "miDebuggerPath": "/usr/bin/gdb"
         },
         {
-            "name": "g++ - Build and debug active file",
+            "name": "(gdb) Build and Launch",
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/program.out",
@@ -42,7 +42,7 @@
                     "ignoreFailures": true
                 }
             ],
-            "preLaunchTask": "${defaultBuildTask}",
+            "preLaunchTask": "build",
             "miDebuggerPath": "/usr/bin/gdb"
         }
     ]
