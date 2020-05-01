@@ -4,7 +4,7 @@
         {
             "type": "shell",
             "label": "build",
-            "command": "/usr/bin/g++",
+            "command": "/usr/bin/gcc",
             "args": [
                 "-Wall",
                 "-g",
@@ -18,10 +18,13 @@
                 "cwd": "/usr/bin"
             },
             "problemMatcher": [
-				{
-					"base": "$gcc",
-					"fileLocation": ["relative", "\\"]
-				}
+                {
+                    "base": "$gcc",
+                    "fileLocation": [
+                        "relative",
+                        "\\"
+                    ]
+                }
             ],
             "group": {
                 "kind": "build",
@@ -34,7 +37,7 @@
         {
             "type": "shell",
             "label": "build (release)",
-            "command": "/usr/bin/g++",
+            "command": "/usr/bin/gcc",
             "args": [
                 "-Wall",
                 "-std=c++17",
@@ -47,10 +50,13 @@
                 "cwd": "/usr/bin"
             },
             "problemMatcher": [
-				{
-					"base": "$gcc",
-					"fileLocation": ["relative", "\\"]
-				}
+                {
+                    "base": "$gcc",
+                    "fileLocation": [
+                        "relative",
+                        "\\"
+                    ]
+                }
             ],
             "group": {
                 "kind": "build",
@@ -62,8 +68,47 @@
         },
         {
             "type": "shell",
+            "label": "build (windows)",
+            "command": "C:\\ProgramData\\chocolatey\\bin\\gcc.exe",
+            "args": [
+                "-Wall",
+                "-g",
+                "-std=c++17",
+                "${workspaceFolder}\\src\\*.cpp",
+                "-o",
+                "${workspaceFolder}\\build\\program.exe",
+                "-lstdc++"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}\\build"
+            },
+            "problemMatcher": [
+                {
+                    "base": "$gcc",
+                    "fileLocation": [
+                        "relative",
+                        "\\"
+                    ]
+                }
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "dependsOn": [
+                "clean (windows)"
+            ]
+        },
+        {
+            "type": "shell",
             "label": "clean",
             "command": "rm -rf ${workspaceFolder}/build/*.out || true"
+        },
+        {
+            "type": "shell",
+            "label": "clean (windows)",
+            "command": "rm -Recurse -Force ${workspaceFolder}\\build\\*.exe",
+            "problemMatcher": []
         }
     ]
 }

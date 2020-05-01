@@ -19,17 +19,17 @@ int main()
 	auto data = network::spiltData(processImages("train-images"), processLabels("train-labels"), 5.0/6.0);
 
 	printf("Data Loaded\n\n");
-	//{784, 20, 15, 10}
+	//{784, 500, 150, 10}
 
-	network nn = network("secondnnmap.nn");//
-	nn.train(10000, 1000, 2.5, data.first);
+	network nn = network({784, 500, 150, 10});//
+	nn.train(600, 100, 4.5, data.first);
 	// auto output = nn.predict(data.second.at(0).first, data.second.at(0).second);
 	// printf("Cost: %.5f\n", output.first);
 	// printf("\nPredicted:\n");
 	// output.second.print();
 	// printf("\nActual:\n");
 	// data.second.at(0).second.print();
-	nn.save("secondnnmap.nn");
+	nn.save("thirdnnmap.nn");
 
 	cout << "Press enter to close...";
 	getchar(); 
