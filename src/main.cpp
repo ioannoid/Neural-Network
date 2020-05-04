@@ -52,12 +52,6 @@ char* loadFile(const char* filename) {
 
 	imagedata.read(imagebytes, isize);
 
-	// int it = 0;
-	// bool dblcheck = true;
-	// while (imagedata >> imagebytes && dblcheck) {
-	// 	it++;
-	// 	if (it > isize) dblcheck = false;
-	// }
 	imagedata.close();
 	return imagebytes;
 }

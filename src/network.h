@@ -160,8 +160,6 @@ void network::propagate(const matrix& in, const matrix& actual)
         dz_da = weights.at(i);
         dc_daMat = (dz_da.T()*(da_dz.hproduct(dc_da)));
     }
-
-    std::cout << "Lol what\n";
 }
 
 void network::threadProp(const matrix& in, const matrix& actual)
